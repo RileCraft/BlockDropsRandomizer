@@ -1,0 +1,15 @@
+name: BlockDropsRandomizer
+version: '${project.version}'
+main: me.rilecraft.blockdropsrandomizer.BlockDropsRandomizer
+api-version: 1.19
+authors: [ RileCraft ]
+description: A complete block drops randomizer.
+commands:
+  Help:
+    description: Shows help page of Block Randomization Plugin.
+  Reload:
+    description: Reloads config.yml of BDR plugin.
+  Toggle:
+    description: Enables/Disables Block Randomization.
+  Shuffle:
+    description: Resets the fixed item drops which are set by the PLUGIN.
