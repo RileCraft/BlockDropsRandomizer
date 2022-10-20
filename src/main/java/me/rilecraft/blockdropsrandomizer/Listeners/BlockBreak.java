@@ -24,6 +24,7 @@ public class BlockBreak implements Listener {
         if (!config.getBoolean("BDR.enabled")) return;
         List<String> blacklistedBlocks = config.getStringList("BDR.blacklistedBlocks");
         Event.setDropItems(false);
+        Object[] allItems = Arrays.stream(Material.values()).toArray();
         ConfigurationSection itemsList = config.getConfigurationSection("BDR.FixedList.items");
         Configuration pluginConfig = CustomConfigHandler.Get();
 
@@ -38,32 +39,45 @@ public class BlockBreak implements Listener {
                 if (blacklistedBlocks.size() > 0) {
                     ArrayList<Object> fixedList = new ArrayList<>(Arrays.asList(Arrays.stream(Material.values()).toArray()));
                     blacklistedBlocks.forEach(fixedList::remove);
-
-                    int RandomNo = new Random().nextInt(fixedList.toArray().length);
-                    blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(fixedList.get(RandomNo).toString())));
+                    Object[] FinalList = fixedList.stream().filter((M) -> {
+                        Material MM = Material.valueOf(M.toString());
+                        return MM.isItem() && MM != Material.AIR;
+                    }).toArray();
+                    int RandomNumber = new Random().nextInt(FinalList.length);
+                    blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(FinalList[RandomNumber].toString())));
                 } else {
-                    Object[] allItems = Arrays.stream(Material.values()).toArray();
-                    int RandomNumber = new Random().nextInt(allItems.length);
-                    blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(allItems[RandomNumber].toString())));
+                    Object[] FinalList = Arrays.stream(allItems).filter((M) -> {
+                        Material MM = Material.valueOf(M.toString());
+                        return MM.isItem() && MM != Material.AIR;
+                    }).toArray();
+                    int RandomNumber = new Random().nextInt(FinalList.length);
+                    blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(FinalList[RandomNumber].toString())));
                 }
             } else if (!config.getBoolean("BDR.randomizeEachDrop")) {
-                if (pluginConfig.contains(blockBroken.getType().name())) {
+                if (pluginConfig != null && pluginConfig.contains(blockBroken.getType().name())) {
                    blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(pluginConfig.getString(blockBroken.getType().name().toUpperCase())), 1));
                 } else {
                     if (blacklistedBlocks.size() > 0) {
                         ArrayList<Object> fixedList = new ArrayList<>(Arrays.asList(Arrays.stream(Material.values()).toArray()));
                         blacklistedBlocks.forEach(fixedList::remove);
+                        Object[] FinalList = fixedList.stream().filter((M) -> {
+                            Material MM = Material.valueOf(M.toString());
+                            return MM.isItem() && MM != Material.AIR;
+                        }).toArray();
+                        int RandomNumber = new Random().nextInt(FinalList.length);
 
-                        int RandomNo = new Random().nextInt(fixedList.toArray().length);
-                        pluginConfig.set(blockBroken.getType().name().toUpperCase(), fixedList.get(RandomNo).toString());
+                        blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(FinalList[RandomNumber].toString())));
+                        pluginConfig.set(blockBroken.getType().name().toUpperCase(), FinalList[RandomNumber].toString());
                         CustomConfigHandler.Save();
-                        blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(fixedList.get(RandomNo).toString())));
                     } else {
-                        Object[] allItems = Arrays.stream(Material.values()).toArray();
-                        int RandomNumber = new Random().nextInt(allItems.length);
-                        pluginConfig.set(blockBroken.getType().name().toUpperCase(), allItems[RandomNumber].toString());
+                        Object[] FinalList = Arrays.stream(allItems).filter((M) -> {
+                            Material MM = Material.valueOf(M.toString());
+                            return MM.isItem() && MM != Material.AIR;
+                        }).toArray();
+                        int RandomNumber = new Random().nextInt(FinalList.length);
+                        pluginConfig.set(blockBroken.getType().name().toUpperCase(), FinalList[RandomNumber].toString());
                         CustomConfigHandler.Save();
-                        blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(allItems[RandomNumber].toString())));
+                        blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(FinalList[RandomNumber].toString())));
                     }
                 }
             }

@@ -1,5 +1,6 @@
 package me.rilecraft.blockdropsrandomizer.Commands;
 
+import me.rilecraft.blockdropsrandomizer.CustomConfigHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -23,7 +24,7 @@ public class Shuffle implements CommandExecutor {
             } catch (IOException e) {
                 System.out.println(ChatColor.RED + "Unable to create CustomConfig File.");
             }
-
+            CustomConfigHandler.Reload();
             sender.sendMessage(ChatColor.GREEN + "[BDR] " + ChatColor.WHITE + "Successfully reshuffled all the block's item drops.");
         }
         return true;

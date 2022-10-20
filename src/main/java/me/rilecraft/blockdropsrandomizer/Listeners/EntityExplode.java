@@ -22,55 +22,69 @@ public class EntityExplode implements Listener {
 
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent Event) {
-        Event.setYield(0);
-        List<Block> BlockExploded = Event.blockList();
+        List<Block> blockExploded = Event.blockList();
         Configuration config = getPlugin(BlockDropsRandomizer.class).getConfig();
-        if (!config.getBoolean("BDR.enabled") || !config.getBoolean("BDR.allowExplosionDrops")) return;
+        if (!config.getBoolean("BDR.enabled")) return;
         List<String> blacklistedBlocks = config.getStringList("BDR.blacklistedBlocks");
+        Event.setYield(0);
+        Object[] allItems = Arrays.stream(Material.values()).toArray();
         ConfigurationSection itemsList = config.getConfigurationSection("BDR.FixedList.items");
         Configuration pluginConfig = CustomConfigHandler.Get();
 
-        BlockExploded.forEach((Block blockBroken) -> {
-            if (itemsList != null && itemsList.contains(blockBroken.getType().name().toUpperCase())) {
-                itemsList.getStringList(blockBroken.getType().name().toUpperCase()).forEach((String Drop) -> {
-                    int DropAmount = Integer.parseInt(Drop.split(":")[1]);
-                    Material dropBlock = Material.valueOf(Drop.split(":")[0]);
+        blockExploded.forEach((Block blockBroken) -> {
+        if (itemsList != null && itemsList.contains(blockBroken.getType().name().toUpperCase())) {
+            itemsList.getStringList(blockBroken.getType().name().toUpperCase()).forEach((String Drop) -> {
+                int DropAmount = Integer.parseInt(Drop.split(":")[1]);
+                Material dropBlock = Material.valueOf(Drop.split(":")[0]);
 
-                    blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(dropBlock, DropAmount));
-                });
-            } else if (config.getBoolean("BDR.randomizeEachDrop")) {
+                blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(dropBlock, DropAmount));
+            });
+        } else if (config.getBoolean("BDR.randomizeEachDrop")) {
+            if (blacklistedBlocks.size() > 0) {
+                ArrayList<Object> fixedList = new ArrayList<>(Arrays.asList(Arrays.stream(Material.values()).toArray()));
+                blacklistedBlocks.forEach(fixedList::remove);
+                Object[] FinalList = fixedList.stream().filter((M) -> {
+                    Material MM = Material.valueOf(M.toString());
+                    return MM.isItem() && MM != Material.AIR;
+                }).toArray();
+                int RandomNumber = new Random().nextInt(FinalList.length);
+                blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(FinalList[RandomNumber].toString())));
+            } else {
+                Object[] FinalList = Arrays.stream(allItems).filter((M) -> {
+                    Material MM = Material.valueOf(M.toString());
+                    return MM.isItem() && MM != Material.AIR;
+                }).toArray();
+                int RandomNumber = new Random().nextInt(FinalList.length);
+                blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(FinalList[RandomNumber].toString())));
+            }
+        } else if (!config.getBoolean("BDR.randomizeEachDrop")) {
+            if (pluginConfig != null && pluginConfig.contains(blockBroken.getType().name())) {
+                blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(pluginConfig.getString(blockBroken.getType().name().toUpperCase())), 1));
+            } else {
                 if (blacklistedBlocks.size() > 0) {
                     ArrayList<Object> fixedList = new ArrayList<>(Arrays.asList(Arrays.stream(Material.values()).toArray()));
                     blacklistedBlocks.forEach(fixedList::remove);
+                    Object[] FinalList = fixedList.stream().filter((M) -> {
+                        Material MM = Material.valueOf(M.toString());
+                        return MM.isItem() && MM != Material.AIR;
+                    }).toArray();
+                    int RandomNumber = new Random().nextInt(FinalList.length);
 
-                    int RandomNo = new Random().nextInt(fixedList.toArray().length);
-                    blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(fixedList.get(RandomNo).toString())));
+                    blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(FinalList[RandomNumber].toString())));
+                    pluginConfig.set(blockBroken.getType().name().toUpperCase(), FinalList[RandomNumber].toString());
+                    CustomConfigHandler.Save();
                 } else {
-                    Object[] allItems = Arrays.stream(Material.values()).toArray();
-                    int RandomNumber = new Random().nextInt(allItems.length);
-                    blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(allItems[RandomNumber].toString())));
-                }
-            } else if (!config.getBoolean("BDR.randomizeEachDrop")) {
-                if (pluginConfig.contains(blockBroken.getType().name())) {
-                    blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(pluginConfig.getString(blockBroken.getType().name().toUpperCase())), 1));
-                } else {
-                    if (blacklistedBlocks.size() > 0) {
-                        ArrayList<Object> fixedList = new ArrayList<>(Arrays.asList(Arrays.stream(Material.values()).toArray()));
-                        blacklistedBlocks.forEach(fixedList::remove);
-
-                        int RandomNo = new Random().nextInt(fixedList.toArray().length);
-                        pluginConfig.set(blockBroken.getType().name().toUpperCase(), fixedList.get(RandomNo).toString());
-                        CustomConfigHandler.Save();
-                        blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(fixedList.get(RandomNo).toString())));
-                    } else {
-                        Object[] allItems = Arrays.stream(Material.values()).toArray();
-                        int RandomNumber = new Random().nextInt(allItems.length);
-                        pluginConfig.set(blockBroken.getType().name().toUpperCase(), allItems[RandomNumber].toString());
-                        CustomConfigHandler.Save();
-                        blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(allItems[RandomNumber].toString())));
-                    }
+                    Object[] FinalList = Arrays.stream(allItems).filter((M) -> {
+                        Material MM = Material.valueOf(M.toString());
+                        return MM.isItem() && MM != Material.AIR;
+                    }).toArray();
+                    int RandomNumber = new Random().nextInt(FinalList.length);
+                    pluginConfig.set(blockBroken.getType().name().toUpperCase(), FinalList[RandomNumber].toString());
+                    CustomConfigHandler.Save();
+                    blockBroken.getWorld().dropItem(blockBroken.getLocation(), new ItemStack(Material.valueOf(FinalList[RandomNumber].toString())));
                 }
             }
+        }
         });
 
     }

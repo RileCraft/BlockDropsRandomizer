@@ -1,9 +1,6 @@
 package me.rilecraft.blockdropsrandomizer;
 
-import me.rilecraft.blockdropsrandomizer.Commands.Help;
-import me.rilecraft.blockdropsrandomizer.Commands.Reload;
-import me.rilecraft.blockdropsrandomizer.Commands.Shuffle;
-import me.rilecraft.blockdropsrandomizer.Commands.Toggle;
+import me.rilecraft.blockdropsrandomizer.Commands.*;
 import me.rilecraft.blockdropsrandomizer.Listeners.BlockBreak;
 import me.rilecraft.blockdropsrandomizer.Listeners.EntityExplode;
 import org.bukkit.ChatColor;
@@ -21,10 +18,8 @@ public final class BlockDropsRandomizer extends JavaPlugin {
        System.out.println(ChatColor.GREEN + "[BDR] " + ChatColor.BLUE + "Let the fun begin ;)");
 
        // Registering Commands
-        getCommand("Help").setExecutor(new Help());
-        getCommand("Reload").setExecutor(new Reload());
-        getCommand("Toggle").setExecutor(new Toggle());
-        getCommand("Shuffle").setExecutor(new Shuffle());
+        getCommand("BDR").setExecutor(new BDR());
+        getCommand("BDR").setTabCompleter(new me.rilecraft.blockdropsrandomizer.TabCompletor.BDR());
 
        // Registering Listeners
         getServer().getPluginManager().registerEvents(new BlockBreak(), this);
