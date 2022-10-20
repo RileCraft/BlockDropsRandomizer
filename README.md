@@ -1,7 +1,5 @@
-# Block Drops Randomizer [BDR] 1.19.X
+# Block Drops Randomizer [BDR] 1.13.X - 1.19.X
 Lightweight plugin for changing the way of block drops. This plugin also comes with very simple config and lot of room for customization as per the user's need.
-
-Recommended to use Java 17 or above.
 
 # Features:
 - Very simple config with commented instructions.
@@ -11,15 +9,15 @@ Recommended to use Java 17 or above.
 
 # Permissions:
 * **BDR.***         - Access to all the commands below.
-* **BDR.reload** - **/blockdropsrandomizer:reload** -- Reloads the config files of the plugin.
-* **BDR.shuffle** - **/blockdropsrandomizer:shuffle** -- Considering randomizeEachDrop is set to false, this will reset all the drops of the blocks which were set by the plugin. FixedList is not affected in any way.
-* **BDR.toggle** - **/blockdropsrandomizer:toggle** - Enables/Disables the plugin.
+* **BDR.reload** - **/bdr reload** -- Reloads the config files of the plugin.
+* **BDR.shuffle** - **/bdr shuffle** -- Considering randomizeEachDrop is set to false, this will reset all the drops of the blocks which were set by the plugin. FixedList is not affected in any way.
+* **BDR.toggle** - **/bdr toggle** - Enables/Disables the plugin.
 
 # Configuration Example:
 ```yml
 # Blocks Drops Randomizer Configuration File.
 # Author: RileCraft :D
-# Version: 1.0.0
+# Version: 1.0.1
 
 BDR:
   enabled: true #Enables/Disables the plugin.
